@@ -1,0 +1,55 @@
+cabal-version:          3.4
+name:                   foo
+version:                0.1.0.0
+synopsis:               A Cabal project template with Hspec tests
+description:
+  This project serves as a template for an arbitrary Cabal project.
+  It features automatic discovery of test files containing Spec values.
+  The Haskell language server seems to be confused by this arrangement
+  and refuses to support modules not listed in the foo.cabal file. 
+  Please replace any references to "foo" or "Foo" with your project name.
+license:                MIT
+license-file:           LICENSE
+author:                 Vladimir Marko
+maintainer:             vladimirmarko1988@gmail.com
+category:               Data
+build-type:             Simple
+extra-doc-files:        CHANGELOG.md
+
+common warnings
+    ghc-options:        -Wall
+
+common general
+    import: warnings
+    default-language:   GHC2021
+    build-depends:      base ^>=4.19.1.0
+
+executable foo
+    import: general
+    hs-source-dirs:     app
+    main-is:            Main.hs
+    build-depends:      foo
+                      , string-interpolate
+    exposed-modules:
+
+library foo-internal
+    import:             general
+    hs-source-dirs:     src/internal
+    exposed-modules:    Data.Foo.Internal
+
+library
+    import: general
+    hs-source-dirs:     src/external
+    build-depends:      foo:foo-internal
+    exposed-modules:    Data.Foo
+
+test-suite foo-test
+    import:             general
+    type:               exitcode-stdio-1.0
+    hs-source-dirs:     test
+    main-is:            Spec.hs
+    build-depends:      hspec
+                      , foo
+                      , foo:foo-internal
+    build-tool-depends: hspec-discover:hspec-discover
+    ghc-options: -Wno-missing-home-modules
